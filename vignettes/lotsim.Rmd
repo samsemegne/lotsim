@@ -1,0 +1,148 @@
+---
+title: "lotsim"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{lotsim}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(lotsim)
+
+set.seed(123L)
+```
+
+## Creating lots
+
+```{r}
+# Creates a single <lot>.
+x = lotsim::new_lot(as.integer(c(1, 0, 0, 0, 1, 0)))
+x
+```
+
+
+```{r}
+# Creates a <lot_series> containing a single lot.
+y = lotsim::new_lot_series__shuffle(size = 30L, count = 5L)
+y
+```
+
+
+```{r}
+# Creates a <lot_series> containing multiple lots.
+z = lotsim::new_lot_series__rbinom(size = 30L, prop = c(.33, .5))
+z
+```
+
+
+```{r}
+# Concatenates all lot objects, yielding a <lot_object_wrapper>. The wrapper is a
+# structure containing <lot> and or <lot_series> objects.
+xyz = x + y + z # c(x, y, z) achieves the same result
+xyz
+
+plot(xyz)
+plot(xyz, what = "true_prop", col = "red", add = TRUE)
+```
+
+
+## Creating patterns
+
+```{r}
+y = rep(0., 100L) |> lotsim::slope(slope = .001)
+plot(1:100, y, type = "l")
+```
+
+
+```{r}
+y = rep(0., 100L) |> lotsim::stairs(height = .01, case_len = 10L)
+plot(1:100, y, type = "l")
+```
+
+
+```{r}
+y = rep(0., 100L) |> lotsim::wave(wave_len = .1, amplitude = .005)
+plot(1:100, y, type = "l")
+```
+
+
+```{r}
+y = rep(0., 100L) |>
+  lotsim::rnorm_runs(sigma = .005, min_run = 1L, max_run = 20L, prob_run = .5)
+
+plot(1:100, y, type = "l")
+```
+
+
+### Combining patterns using pipes
+
+```{r}
+y = rep(0., 100L) |> 
+  lotsim::slope(slope = .0001) |>
+  lotsim::wave(wave_len = .1, amplitude = .005)
+
+plot(1:100, y, type = "l")
+```
+
+## Everything together
+
+```{r fig.height = 7}
+a = rep(.05, 30L) |>
+  lotsim::rnorm_runs(.01, 1L, 20L, .5) |>
+  lotsim::slope(.0005) |>
+  lotsim::clamp(lower = 0L, upper = 1L) # Convenience function
+
+b = rep(0.05, 30L) |>
+  lotsim::slope(.0001) |>
+  lotsim::wave(.5, .005) |>
+  lotsim::clamp(0L, 1L)
+
+xy = lotsim::new_lot_series__rbinom(100L, a) +
+  lotsim::new_lot_series__rbinom(100L, b)
+
+plot(xy)
+plot(xy, what = "true_prop", col = "red", add = TRUE)
+```
+
+
+```{r fig.width= 5}
+plot(xy, flip = FALSE, ylim = c(0, .15))
+```
+
+
+```{r fig.height = 7}
+obj = lotsim::new_lot_series__rbinom(100L, lotsim::rnorm_runs(rep(.05, 100), .02, 1L, 20L, .5)) +
+  lotsim::new_lot_series__rbinom(100L, lotsim::slope(rep(.05, 100), -.0001)) +
+  lotsim::new_lot_series__rbinom(100L, lotsim::stairs(rep(.04, 100), .1, 10L)) +
+  lotsim::new_lot_series__rbinom(100L, lotsim::wave(rep(.03, 100), .2, .005))
+
+plot(obj[[1L]], type = "n", xlim = c(0, .2))
+for (o in obj) {
+  plot(o, add = TRUE, col = "gray")
+  plot(o, add = TRUE, what = "true_prop", col = "dodgerblue")
+}
+```
+
+
+```{r}
+as.data.frame(obj) |> utils::head(10L)
+```
+
+
+## Taking sub-samples
+
+```{r}
+lotsim::lot_sample(xyz, 4L)
+```
+
+
+About indexing `lot_object_wrapper`s, currently single bracket indexing `x[1]` has the default `list` indexing behavior, but this will be changed later to return individual batches. However, the same effect can be achieved first calling `as.lot_series()`, then indexing the resulting `lot_series`.
+
