@@ -74,7 +74,7 @@ rnorm_runs = function(x, sigma, min_run, max_run, prob_run) {
   while (length(vals) < len) {
     remaining_len = len - length(vals)
     run_len = rbinom(1L, max_run, prob_run)#|>
-    run_len = max(run_len, min_run_len, na.rm = FALSE)
+    run_len = max(run_len, min_run, na.rm = FALSE)
     run_len = min(run_len, remaining_len, na.rm = FALSE)
 
     val = rnorm(1L, 0L, sigma)
