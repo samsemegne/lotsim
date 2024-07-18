@@ -12,6 +12,8 @@ get_prop.lot_object_wrapper = get_prop.lot_series
 #' @export
 get_size.lot_object_wrapper = get_size.lot_series
 #' @export
+get_parent_size.lot_object_wrapper = get_parent_size.lot_series
+#' @export
 get_true_prop.lot_object_wrapper = get_true_prop.lot_series
 #' @export
 get_true_count.lot_object_wrapper = get_true_count.lot_series

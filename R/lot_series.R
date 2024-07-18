@@ -13,6 +13,8 @@ get_prop.lot_series = function(x) lapun(x, get_prop)
 #' @export
 get_size.lot_series = function(x) lapun(x, get_size)
 #' @export
+get_parent_size.lot_series = function(x) lapun(x, get_parent_size)
+#' @export
 get_true_prop.lot_series = function(x) lapun(x, get_true_prop)
 #' @export
 get_true_count.lot_series = function(x) lapun(x, get_true_count)

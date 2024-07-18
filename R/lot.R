@@ -11,6 +11,8 @@ get_true_prop.lot = function(x) attr(x, "true_prop", TRUE) %||% NA_real_
 #' @export
 get_true_count.lot = function(x) attr(x, "true_count", TRUE) %||% NA_integer_
 #' @export
+get_parent_size.lot = function(x) attr(x, "parent_size", TRUE) %||% NA_integer_
+#' @export
 get_count.lot = function(x) attr(x, "count", TRUE) %||% stop("no count attr")
 #' @export
 get_prop.lot = function(x) attr(x, "prop", TRUE) %||% stop("no prop attr")

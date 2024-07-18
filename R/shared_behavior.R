@@ -10,6 +10,8 @@ get_count = function(x)       UseMethod("get_count")
 #' @export
 get_size = function(x)        UseMethod("get_size")
 #' @export
+get_parent_size = function(x) UseMethod("get_parent_size")
+#' @export
 get_num_lot = function(x)     UseMethod("get_num_lot")
 #' @export
 lot_sample = function(x, ...) UseMethod("lot_sample")
@@ -22,6 +24,7 @@ as_df = function(x, ...) {
     true_count = get_true_count(x),
     true_prop = get_true_prop(x),
     size = get_size(x),
+    parent_size = get_parent_size(x),
     row.names = NULL,
     check.rows = FALSE,
     check.names = FALSE,
